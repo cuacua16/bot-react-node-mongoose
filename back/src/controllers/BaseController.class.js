@@ -1,9 +1,8 @@
 import autoBind from 'auto-bind';
-import { resLog } from './logger.js';
+import { resLog } from '../utils/logger.js';
 
 class BaseController {
   constructor(service, name) {
-    console.log("Controller instance", service.model.modelName)
     if (!service) throw new Error("Service is required to initialize the controller");
     this.service = service;
     this.collectionName = this.service.model.collection?.collectionName;

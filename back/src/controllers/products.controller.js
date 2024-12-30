@@ -1,7 +1,7 @@
 import ProductService from "../services/products.service.js";
 import Product from "../models/product.model.js"
 import { resLog } from "../utils/logger.js";
-import BaseController from "../utils/BaseController.class.js";
+import BaseController from "./BaseController.class.js";
 
 class ProductController extends BaseController {
   constructor(service, name) {

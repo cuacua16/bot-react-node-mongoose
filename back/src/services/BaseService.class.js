@@ -1,6 +1,5 @@
 class BaseService {
   constructor({model, db}) {
-    console.log("Service instance", model)
     if (!model) throw new Error("Model is required to initialize the service");
     this.model = model;
     this.db = db || this.model;

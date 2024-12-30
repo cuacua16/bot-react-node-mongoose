@@ -1,4 +1,4 @@
-import BaseService from "../utils/BaseService.class.js";
+import BaseService from "./BaseService.class.js";
 
 class UserService extends BaseService {
   constructor(data) {

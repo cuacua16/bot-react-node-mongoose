@@ -1,7 +1,7 @@
 import OrderService from "../services/orders.service.js";
 import Order from "../models/order.model.js"
 import { resLog } from "../utils/logger.js";
-import BaseController from "../utils/BaseController.class.js";
+import BaseController from "./BaseController.class.js";
 
 class OrderController extends BaseController {
   constructor(service, name) {
