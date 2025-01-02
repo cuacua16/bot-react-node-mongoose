@@ -50,9 +50,9 @@ class BaseController {
 
   async deleteById(req, res) {
     try {
-      const deletedRecord = await this.service.deletebyId(req.params.id);
+      const deletedRecord = await this.service.deleteById(req.params.id);
       if (!deletedRecord) return this.handleNotFound(req, res);
-      return resLog(req, res, 200, { message: `${this.name} deleted. Id: ${req.params.id}` })
+      return resLog(req, res, 200, { message: `${this.modelName} deleted. Id: ${req.params.id}` })
     } catch (error) {
       return resLog(req, res, 500, { error: error.message })
     }
