@@ -1,22 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-import { FaWindowClose, FaRedo, FaHandPointer } from "react-icons/fa";
+import { FaWindowClose, FaRedo, FaHandPointer, FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
 import { chats } from "../../utils/chats";
 import { ChatBotLogic } from "../../utils/ChatBotLogic";
 import { ResizeBar } from "../ResizeBar/ResizeBar";
 import { useCart } from "../../context/CartContext";
 
-const chatbot = new ChatBotLogic({ chats, delayResponse: 1000 });
+const chatbot = new ChatBotLogic({ chats, delayResponse: 1000, sound: true });
 
 export const Chatbot = () => {
   const { cart } = useCart();
-  const [chatWidth, setChatWidth] = useState(400);
+  const [chatWidth, setChatWidth] = useState(480);
   const [chatHeight, setChatHeight] = useState(null);
   const messagesEndRef = useRef(null);
   const chatRef = useRef(null);
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [sound, setSound] = useState(true);
   const [userMessage, setUserMessage] = useState("");
   const [messages, setMessages] = useState(chatbot.getMessages());
   const [showTooltip, setShowTooltip] = useState(true);
@@ -24,6 +25,11 @@ export const Chatbot = () => {
   chatbot.actions = { navigate };
 
   const toggleChat = () => setIsOpen(!isOpen);
+
+  const toggleSound = () => {
+    chatbot.sound = !sound;
+    setSound(!sound)
+  } 
 
   const resetChat = () => {
     chatbot.resetChat();
@@ -94,6 +100,12 @@ export const Chatbot = () => {
               Chatea con nuestro chatbot
             </h3>
             <div>
+              <button
+                className="text-xl text-blue-950 hover:text-gray-800 mr-3"
+                onClick={toggleSound}
+              >
+                {sound ? <FaVolumeUp /> : <FaVolumeMute />}
+              </button>
               <button
                 className="text-xl text-blue-950 hover:text-gray-800 mr-3"
                 onClick={resetChat}

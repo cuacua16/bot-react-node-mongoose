@@ -10,6 +10,7 @@ export class ChatBotLogic {
     this.messages = [{ sender: 'bot', ...this.root }];
     this.onUpdateMessages([...this.messages]);
     this.actions = config.actions || {};
+    this.sound = config.sound;
   }
 
   buildChatBot() {
@@ -44,8 +45,21 @@ export class ChatBotLogic {
     }
   }
 
+  stopAudio(){
+    if (this.playing) this.playing.pause();
+  }
+  
+  playAudio(audio) {
+    if (this.sound) {
+      this.playing = new Audio(`/audio/${audio}.mp3`)
+      this.playing.play()
+    } 
+  }
+
   async userInput(input, navigate) {
     if (!input.trim()) return;
+    
+    this.playAudio("typing")
 
     const userMessage = { sender: 'user', bot_text: input };
     this.addMessage(userMessage);
@@ -69,22 +83,26 @@ export class ChatBotLogic {
       this.addMessage({ sender: 'bot', bot_text: this.currentNode.bot_text_post(input)});
     }
 
+    this.stopAudio();
     if (nextNode) {
       if (nextNode.action) this.nodeAction(nextNode);
       if (typeof nextNode.bot_text == 'function') nextNode.bot_text = nextNode.bot_text(input);
       this.currentNode = nextNode;
       this.addMessage({ sender: 'bot', ...nextNode});
+      this.playAudio("success")
     } else {
       if (this.currentNode.type === 'input') {
         this.addMessage({
           sender: 'bot',
           bot_text: 'Gracias por tu información.',
         });
+        this.playAudio("success2")
       } else {
         this.addMessage({
           sender: 'bot',
           bot_text: "Lo siento, no puedo entender tu mensaje. ¿En qué puedo ayudarte?",
         });
+        this.playAudio("error")
       }
       this.currentNode = this.root;
     }
