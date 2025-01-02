@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(async (req, res, next) => {
-  log("info", `${req.method} ${req.originalUrl}`);
+  log("info", `${req.method} ${req.originalUrl} ${req.body ? `Body: ${JSON.stringify(req.body)}`: ''}`);
   req.start = Date.now();
   next();
 })

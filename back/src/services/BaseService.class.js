@@ -22,15 +22,15 @@ class BaseService {
   }
 
   async updateById(id, body) {
-    return await this.db.findByIdAndUpdate(id, body);
+    return await this.db.findByIdAndUpdate(id, body, {new: true});
   }
   
   async updateOne(filter, body) {
-    return await this.db.updateOne(filter, body);
+    return await this.db.updateOne(filter, body, {new: true});
   }
   
   async updateMany(filter, body) {
-    return await this.db.updateMany(filter, body);
+    return await this.db.updateMany(filter, body, {new: true});
   }
 
   async deleteById(id) {
