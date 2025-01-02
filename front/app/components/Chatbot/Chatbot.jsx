@@ -2,13 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { FaWindowClose, FaRedo, FaHandPointer } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
-import { chats } from "./chats";
+import { chats } from "../../utils/chats";
 import { ChatBotLogic } from "../../utils/ChatBotLogic";
 import { ResizeBar } from "../ResizeBar/ResizeBar";
+import { useCart } from "../../context/CartContext";
 
 const chatbot = new ChatBotLogic({ chats, delayResponse: 1000 });
 
 export const Chatbot = () => {
+  const { cart } = useCart();
   const [chatWidth, setChatWidth] = useState(400);
   const [chatHeight, setChatHeight] = useState(null);
   const messagesEndRef = useRef(null);
@@ -34,19 +36,22 @@ export const Chatbot = () => {
 
   const handleUserMessageChange = (e) => setUserMessage(e.target.value);
 
-  const showOptions = (message) =>
-    message.sender === "bot" &&
-    message.options &&
-    message.options.length > 0 &&
-    !message.disabled;
+  const showOptions = (message) => message.sender === "bot" && message.options && message.options.length > 0 && !message.disabled;
 
+  useEffect(() => {
+    if (cart.length) {
+      if (!isOpen) setIsOpen(true) 
+      chatbot.addMessage({sender: 'bot', bot_text: "Has agregado un producto al carrito!, ahora tienes "+cart.length})
+    }
+  }, [cart]);
+    
   useEffect(() => {
     if (messagesEndRef.current)
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowTooltip(false), 5000);
+    const timer = setTimeout(() => setShowTooltip(false), 10000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -61,7 +66,7 @@ export const Chatbot = () => {
         {!isOpen && (
           <>
             {showTooltip && (
-              <div className="absolute bottom-24 right-6 w-64 bg-gray-900 text-white text-sm rounded-lg p-3 shadow-lg">
+              <div className="absolute bottom-24 right-6 w-64 bg-gray-900 text-white text-s rounded-lg p-3 shadow-lg">
                 ¡Hola! Estoy aquí para ayudarte. 😊
                 <div className="absolute bottom-[-6px] right-4 w-3 h-3 bg-gray-900 transform rotate-45"></div>
               </div>
