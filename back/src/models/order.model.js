@@ -5,16 +5,20 @@ const orderSchema = new Schema({
     type: String,
     default: "Pending"
   },
-  products: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true,
+  delivery_at: Date,
+  price: Number,
+  items: [{
+    product: {
+      type: Schema.Types.ObjectId,
+      ref: 'Product',
+      required: true,
+    },
+    quantity: Number
   }],
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    // required: true,
-  },
+  }
 }, {
   timestamps: true
 });
