@@ -1,107 +1,164 @@
 export const chats = [
   {
-    id: "9264asdk",
+    id: "root",
     bot_text: "¡Hola! ¿En qué puedo ayudarte?",
     root: true,
     matches: ["hola", "oye", "buenas tardes", "que tal"]
   },
-
+  
   {
-    id: "ds8a9d",
-    user_input: "Quiero realizar un pedido.",
-    id_parent: "9264asdk",
-    bot_text: (data) => "¡Genial! ¿Qué tipo de sushi te gustaría pedir? 🍣",
-    type: "select",
-    action: () => {},
-    conditionActive: () => true,
-    matches: ["pedido", "hacer pedido"],
+    id: "root",
+    fallback: true,
+    bot_text: "¿Puedo ayudarte en algo más?",
+    matches: []
   },
-
+  
   {
-    id: "ds8a0hd0s",
-    user_input: "Quiero sushi.",
-    id_parent: "ds8a9d",
-    bot_text: (data) => "Perfecto, ¿qué tipo de sushi prefieres? Tenemos rollos, nigiri, sashimi, entre otros.",
-    type: "select",
-    action: () => {},
-    conditionActive: () => true,
-    matches: ["quiero sushi", "dame sushi", "quiero pedir sushi"],
+    id: "faq",
+    user_input: "Ver preguntas frecuentes",
+    parents: ["root"],
+    bot_text: "Aquí tienes un listado de preguntas frecuentes. ¿Sobre qué tema necesitas ayuda?",
+    matches: ["una pregunta", "preguntas", "preguntas frecuentes"],
   },
-
+  
   {
-    id: "sushiType",
-    user_input: "Rollos",
-    id_parent: "ds8a0hd0s",
-    bot_text: (data) => "¡Excelente elección! ¿Cuántos rollos de sushi te gustaría pedir?",
-    bot_text_post: (input) => `Excelente! ${input} rollos es buen número`,
-    type: "input",
-    action: (data) => { },
-    validate: (input) => !isNaN(input),
-    validate_bot_text: (input) => `Ups! 😵 ${input} no es un número válido de rollos. Intenta nuevamente`,
-    matches: ["rollos", "sushi rollo", "rollo"],
+    id: "faq_order",
+    user_input: "¿Cómo hago un pedido?",
+    parents: ["faq"],
+    bot_text: "¡Yo puedo ayudarte a hacer un pedido! ¿Quieres realizar uno ahora?",
+    matches: ["como hago pedido", "como pido", "quiero pedir algo"],
   },
-
+  
   {
-    id: "addMore",
-    user_input: "Sí, quiero añadir una bebida.",
-    id_parent: "orderQuantity",
-    bot_text: (data) => "¡Muy bien! ¿Qué bebida te gustaría añadir al pedido? 🍹",
-    type: "select",
-    action: () => {},
-    matches: ["bebida", "beber"],
+    id: "faq_time",
+    user_input: "¿Están abiertos?",
+    parents: ["faq"],
+    bot_text: (chatbot) => {
+      if (chatbot.isOpen()) return `¡Sí! estaremos hasta las ${chatbot.timeClose} horas.`;
+      return `No, estaremos abiertos desde las ${chatbot.timeOpen} hasta las ${chatbot.timeClose} horas, pero igual podríamos reservar un pedido ahora.`
+    },
+    matches: ["esta abierto", "abierto ahora"],
   },
-
+  
   {
-    id: "drinkSelection",
-    user_input: "Agua",
-    id_parent: "addMore",
-    bot_text: (data) => "Has elegido agua. ¿Cuántas botellas te gustaría?",
-    type: "input",
-    action: () => {},
+    id: "faq_delivery",
+    user_input: "¿Hacen envíos a domicilio?",
+    parents: ["faq"],
+    bot_text: (chatbot) => `¡Sí! hacemos envíos dentro de nuestro horario de atención (${chatbot.timeOpen} a ${chatbot.timeClose} horas)`,
+    matches: ["hacen envios"],
   },
-
+  
   {
-    id: "drinkQuantity",
-    user_input: "2 botellas",
-    id_parent: "drinkSelection",
-    bot_text: (data) => "Perfecto, has añadido 2 botellas de agua a tu pedido. ¿Te gustaría añadir algo más?",
-    type: "input",
-    action: () => {},
+    id: "faq_cancel_order",
+    user_input: "¿Puedo cancelar un pedido después de confirmarlo?",
+    parents: ["faq"],
+    bot_text: `¡Sí! puedes cancelar pedidos que todavía no fueron entregados. Puedes hacerlo en la sección "Mis pedidos" en el menú de la izquierda 👈`,
+    matches: ["anular pedido"],
   },
-
+  
   {
-    id: "finalizeOrder",
-    user_input: "No, está bien así.",
-    id_parent: "drinkQuantity",
-    bot_text: (data) => "Entendido. Resumen de tu pedido: 3 rollos de sushi y 2 botellas de agua. ¿Quieres confirmar el pedido?",
-    type: "select",
-    action: () => {},
-    matches: ["confirmar", "sí", "aceptar", "confirmar pedido"],
-  },
-
-  {
-    id: "confirmOrder",
-    user_input: "Sí, confirmar.",
-    id_parent: "finalizeOrder",
-    bot_text: (data) => "¡Tu pedido ha sido confirmado! Te enviaremos un resumen por correo y comenzaremos a prepararlo. 🎉",
-    type: "message",
-    action: () => {},
-  },
-
-  {
-    id: "viewMenu",
+    id: "view_menu",
     user_input: "Quiero ver el menú.",
-    id_parent: "9264asdk",
-    bot_text: (data) => "Perfecto, puedes ver el menú en nuestra página de productos.",
-    action: (actions) => { actions.navigate("/products") },
-    matches: ["ver menú", "mostrar menú", "productos", "sushi"],
+    parents: ["root", "order", "input_quantity"],
+    bot_text: "Perfecto, ya puedes ver el menú en nuestra página de productos 👈",
+    action: (chatbot) => { chatbot.navigate("/products") },
+    matches: ["ver menú", "mostrar menú", "ver los productos", "ver productos"],
+  },
+  
+  {
+    id: "order",
+    user_input: "Quiero realizar un pedido.",
+    conditionActive: (chatbot) => !chatbot.cart.items.length,
+    parents: ["root", "view_cart", "faq_order", "input_quantity"],
+    bot_text: "¡Genial! ¿Ya sabes qué vas a pedir o prefieres que te ayude a elegir algo?",
+    matches: ["pedido", "hacer pedido", "quiero hacer un pedido", "realizar un pedido", "realizar pedido"],
+  },
+  
+  {
+    id: "order",
+    user_input: "Quiero agregar productos a mi carrito",
+    conditionActive: (chatbot) => !!chatbot.cart.items.length,
+    parents: ["root", "view_cart", "faq_order", "input_quantity", "cart_updated"],
+    bot_text: "¡Genial! ¿Qué quieres agregar?",
+    matches: ["agregar a mi carrito", "agregar producto"],
+  },
+  
+  {
+    id: "view_cart",
+    user_input: "Ver mi carrito.",
+    parents: ["root", "input_quantity", "cart_updated"],
+    bot_text: (chatbot) => {
+      if (chatbot.cart.items.length === 0) {
+        return "Tu carrito está vacío. ¿Te gustaría agregar algo?";
+      }
+      return `Tu carrito actual contiene: ${chatbot.cart.items.map(i => `${i.quantity}x ${i.product.name}`).join(", ")}. ¿Quieres agregar algo más?`;
+    },
+    matches: ["mi carrito", "ver carrito", "ver mi carrito"],
+  },
+  
+  {
+    id: "cart_updated",
+    cart_updated: true,
+    bot_text: (chatbot) => {
+      const quantityProducts = chatbot.cart.items.reduce((acc, p) => acc + p.quantity, 0);
+      return `¡Tu carrito se ha actualizado! ahora tienes ${quantityProducts} producto${quantityProducts > 1 ? 's' : ''}, con un costo total de $${chatbot.cart.price}`
+    },
+    matches: [],
+  },
+  
+  {
+    id: "sushi",
+    user_input: "Quiero Sushi",
+    parents: ["order"],
+    dynamicOptions: (chatbot) => chatbot.products?.filter(p => p.type == 'sushi').map(p => ({user_input: p.name})),
+    actionFinish: (chatbot) => chatbot.selectProduct(),
+    bot_text: `¿Quieres sushi 🍣? En este momento puedes elegir entre las siguientes opciones disponibles:`,
+    validate: (chatbot) => chatbot.products.find(p => p.type == 'sushi'),
+    validate_error: (chatbot) => {
+      chatbot.botMessage({bot_text: "Lo siento, no tenemos sushi en este momento"})
+      return false;
+    },
+    matches: ["quiero sushi", "quiero pedir sushi", "dame sushi"],
+  },
+  
+  {
+    id: "drink",
+    user_input: "Quiero algo de beber",
+    parents: ["order"],
+    dynamicOptions: (chatbot) => chatbot.products?.filter(p => p.type == 'drink').map(p => ({user_input: p.name})),
+    actionFinish: (chatbot) => chatbot.selectProduct(),
+    bot_text: `¿Quieres algo para beber 🍾? En este momento puedes elegir entre las siguientes opciones disponibles:`,
+    validate: (chatbot) => chatbot.products.find(p => p.type == 'drink'),
+    validate_error: (chatbot) => {
+      chatbot.botMessage({bot_text: "Lo siento, no tenemos bebidas en este momento"})
+      return false; 
+    },
+    matches: ["para beber", "agregar bebida", "quiero bebida"],
+  },
+  
+  {
+    id: "complete_order",
+    user_input: "Confirmar compra",
+    bg: "bg-green-500",
+    action: async (chatbot) => {
+      chatbot.completedOrder = {...chatbot.cart};
+      chatbot.setBotEvent({action: "completeOrder"});
+    },
+    conditionActive: (chatbot) => !!chatbot.cart.items.length,
+    parents: ["view_cart", "cart_updated"],
+    bot_text: (chatbot) => `Se ha confirmado el pedido: ${chatbot.completedOrder.items.map(item => `${item.quantity}x ${item.product.name}`).join(", ")}. El precio total es de $${chatbot.completedOrder.price}. Lo entregaremos ${chatbot.isOpen() ? 'en 30 minutos.' : `a las ${chatbot.timeOpen}:00.`}`,
+    matches: ["confirmar pedido", "comfirmar compra"],
+  },
+  
+  {
+    id: "cancel_order",
+    user_input: "Cancelar pedido (limpiar carrito)",
+    bg: "bg-red-500",
+    conditionActive: (chatbot) => !!chatbot.cart.items.length,
+    action: (chatbot) => chatbot.setBotEvent({ action: "clearCart"}),
+    parents: ["view_cart", "cart_updated"],
+    bot_text: (chatbot) => `Se ha limpiado el carrito.`,
+    matches: ["limpiar carrito"],
   },
 
-  {
-    id: "bye",
-    user_input: "Adiós.",
-    bot_text: (data) => "Gracias por contactarnos. ¡Hasta luego! 🍣",
-    type: "message",
-    matches: ["adios", "chao", "hasta luego"],
-  },
 ];

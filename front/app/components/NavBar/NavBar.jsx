@@ -13,7 +13,7 @@ export const NavBar = ({ collapsed, setCollapsed }) => {
     <div className={`fixed top-0 left-0 h-full bg-gray-900 text-white shadow-2xl transition-all duration-300 ${collapsed ? 'w-24' : 'w-64'}`}>
       <div className="relative flex items-center justify-between px-4 py-3 border-b border-gray-700">
         <h2 className='h-9'>
-          <span className={`${collapsed ? 'hidden' : 'text-2xl font-semibold'} transition-all duration-300`}>Pedidos</span>
+          <span className={`${collapsed ? 'hidden' : 'text-2xl font-semibold'} transition-all duration-300`}>Tienda</span>
         </h2>
         <button
           onClick={toggleSidebar}
@@ -27,7 +27,7 @@ export const NavBar = ({ collapsed, setCollapsed }) => {
       </div>
 
       <ul className="mt-4 space-y-2">
-        <li>
+        {/* <li>
           <Link
             to="/"
             className="flex items-center px-4 py-2 text-lg font-medium hover:bg-gray-700 transition-colors"
@@ -38,7 +38,7 @@ export const NavBar = ({ collapsed, setCollapsed }) => {
             <span className={`${collapsed ? 'hidden' : 'ml-3'}`}>Inicio</span>
           </Link>
           <Tooltip id="home-tooltip" place="right" effect="solid" />
-        </li>
+        </li> */}
         <li>
           <Link
             to="/products"

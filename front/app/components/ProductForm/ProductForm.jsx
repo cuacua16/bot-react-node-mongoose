@@ -36,7 +36,7 @@ export const ProductForm = ({ isOpen, onClose, onProductAdded, existingProduct }
       }
       onClose();
     } catch (error) {
-      console.error("Error saving product:", error);
+      console.error(error);
     }
   };
 

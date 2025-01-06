@@ -23,7 +23,7 @@ export default () => {
         const response = await api.products.get();
         setProducts(response.data);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error(error);
         toast.error("Error al cargar los productos");
       }
     };
