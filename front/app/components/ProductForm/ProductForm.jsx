@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../../services/api";
 
 const defaultProduct = {
+  type: "",
   name: "",
   price: "",
   image_url: "",
@@ -48,6 +49,16 @@ export const ProductForm = ({ isOpen, onClose, onProductAdded, existingProduct }
           {existingProduct ? "Editar Producto" : "Crear Producto"}
         </h2>
         <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Tipo
+            </label>
+            <select name="type" value={formData.type} onChange={handleInputChange} required className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+              <option value=""></option>
+              <option value="sushi">Sushi</option>
+              <option value="drink">Bebida</option>
+            </select>
+          </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
               Nombre

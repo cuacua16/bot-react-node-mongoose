@@ -8,10 +8,14 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default () => {
   const isAdmin = import.meta.env.VITE_IS_ADMIN === "true";
-  const { cart, addToCart } = useCart();
+  const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const tr = {
+    "drink": "Bebida",
+    "sushi": "Sushi"
+  }
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -40,7 +44,6 @@ export default () => {
           );
           toast.success("Producto eliminado exitosamente");
         } catch (error) {
-          console.error("Error deleting product:", error);
           toast.error("Error al eliminar el producto");
         }
       },
@@ -53,10 +56,14 @@ export default () => {
     setSelectedProduct(product);
     setModalOpen(true);
   };
-  
+
   const handleAddToCart = (product) => {
-    addToCart(product);
-    toast.success(`${product.name} agregado al carrito`, { position: "bottom-center",  autoClose: 2000 });
+    addToCart(product, 1);
+    toast.success(`Se ha agregado 1 unidad de ${product.name} al carrito`, {
+      position: "bottom-center",
+      autoClose: 2000,
+      style: { width: 440 },
+    });
   };
 
   return (
@@ -69,25 +76,29 @@ export default () => {
             setSelectedProduct(null);
             setModalOpen(true);
           }}
-          className="my-6 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          className="my-6 px-6 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600"
         >
           Crear Producto
         </button>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {products.map((product, idx) => (
-          <div key={product.id || idx} className="border p-4 rounded-xl shadow-xl">
-            {isAdmin && (<div className="flex justify-end gap-1 mb-1 -mt-2">
+          <div
+            key={product._id || idx}
+            className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+          >
+            {isAdmin && (
+              <div className="flex justify-end gap-2 p-2 bg-gray-100">
                 <button
                   onClick={() => handleEditProduct(product)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  className="p-2 text-gray-800 hover:text-blue-800"
                 >
                   <FaEdit />
                 </button>
                 <button
                   onClick={() => handleDeleteProduct(product)}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  className="p-2 text-red-600 hover:text-red-800"
                 >
                   <FaTrashAlt />
                 </button>
@@ -96,17 +107,24 @@ export default () => {
             <img
               src={product.image_url || "/img/not_available.png"}
               alt={product.name || "Imagen no disponible"}
-              className="w-full h-40 object-contain mb-4"
+              className="w-full h-48 object-contain bg-gray-50"
               onError={(e) => (e.target.src = "/img/not_available.png")}
             />
-            <h3 className="text-lg font-bold">{product.name}</h3>
-            <p className="text-gray-700">Precio: ${product.price}</p>
-            <button
-              onClick={() => handleAddToCart(product)}
-              className="mt-2 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-            >
-              <FaCartPlus /> Agregar al carrito
-            </button>
+            <div className="p-4">
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                {product.name}{" "}
+                <span className="text-sm text-gray-500">
+                  ({tr[product.type] || ""})
+                </span>
+              </h3>
+              <p className="text-gray-700 mb-4">Precio: <b>${product.price}</b></p>
+              <button
+                onClick={() => handleAddToCart(product)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+              >
+                <FaCartPlus /> Agregar al carrito
+              </button>
+            </div>
           </div>
         ))}
       </div>
