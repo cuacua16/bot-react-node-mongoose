@@ -19,10 +19,6 @@ class OrderService extends BaseService {
       model: Product
     }).populate("user");
   }
-  
-  async findOrdersByStatus(status) {
-    return await this.db.find({ status });
-  }
 }
 
 export default OrderService;

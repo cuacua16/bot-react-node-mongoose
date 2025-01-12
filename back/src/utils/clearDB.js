@@ -5,6 +5,7 @@ import Order from "../models/order.model.js";
 
 const deleteData = async () => {
   try {
+    await connectMongoDB();
     await Product.deleteMany();
     await Order.deleteMany();
     console.log("Base de datos vaciada correctamente")

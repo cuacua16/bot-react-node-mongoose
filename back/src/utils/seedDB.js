@@ -19,6 +19,7 @@ const productsData = [
 
 const createSeedData = async () => {
   try {
+    await connectMongoDB();
     await Product.deleteMany();
     await Order.deleteMany();
     console.log("Datos existentes eliminados");

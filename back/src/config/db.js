@@ -1,14 +1,15 @@
 import moongose from "mongoose";
 import config from "./config.js"
 
-export const connectMongoDB = (async () => {
+export const connectMongoDB = async () => {
   try {
-    await moongose.connect(config.mongodb_uri, {
+    const connection = await moongose.connect(config.mongodb_uri, {
       serverSelectionTimeoutMS: 5000,
     })
     console.log("DB CONNECTED")
+    return connection;
   } catch (error) {
     console.error(error)
     console.error("ERROR AL CONECTAR BASE DE DATOS")
   }
-})();
+};

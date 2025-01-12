@@ -13,18 +13,18 @@ class BaseController {
   async create(req, res) {
     try {
       const newRecord = await this.service.create(req.body);
-      return resLog(req, res, 201, newRecord)
+      return resLog(req, res, 201, newRecord);
     } catch (error) {
-      return resLog(req, res, 500, { error: error.message })
+      return this.handleError(error, req, res);
     }
   }
 
   async find(req, res) {
     try {
       const records = await this.service.find(req.query);
-      return resLog(req, res, 200, records)
+      return resLog(req, res, 200, records);
     } catch (error) {
-      return resLog(req, res, 500, { error: error.message })
+      return this.handleError(error, req, res);
     }
   }
 
@@ -32,9 +32,9 @@ class BaseController {
     try {
       const record = await this.service.findById(req.params.id);
       if (!record) return this.handleNotFound(req, res);
-      return resLog(req, res, 200, record)
+      return resLog(req, res, 200, record);
     } catch (error) {
-      return resLog(req, res, 500, { error: error.message })
+      return this.handleError(error, req, res);
     }
   }
 
@@ -42,9 +42,9 @@ class BaseController {
     try {
       const updatedRecord = await this.service.updateById(req.params.id, req.body);
       if (!updatedRecord) return this.handleNotFound(req, res);
-      return resLog(req, res, 200, updatedRecord)
+      return resLog(req, res, 200, updatedRecord);
     } catch (error) {
-      return resLog(req, res, 500, { error: error.message })
+      return this.handleError(error, req, res);
     }
   }
 
@@ -52,14 +52,25 @@ class BaseController {
     try {
       const deletedRecord = await this.service.deleteById(req.params.id);
       if (!deletedRecord) return this.handleNotFound(req, res);
-      return resLog(req, res, 200, { message: `${this.modelName} deleted. Id: ${req.params.id}` })
+      return resLog(req, res, 200, { message: `${this.modelName} deleted. Id: ${req.params.id}` });
     } catch (error) {
-      return resLog(req, res, 500, { error: error.message })
+      return this.handleError(error, req, res);
     }
   }
   
   handleNotFound(req, res) {
-    return resLog(req, res, 404, { message: `${this.modelName} not found` })
+    return resLog(req, res, 404, { message: `${this.modelName} not found` });
+  }
+  
+  handleError(error, req, res) {
+    console.error("error", error.message)
+    if (error.name === 'ValidationError') {
+      return resLog(req, res, 400, { error: error.message });
+    } else if (error.name === 'CastError') {
+      return resLog(req, res, 400, { error: 'Invalid ID format' });
+    } else {
+      return resLog(req, res, 500, { error: error.message });
+    }
   }
 }
 
