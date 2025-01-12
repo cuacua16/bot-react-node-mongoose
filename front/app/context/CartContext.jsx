@@ -13,19 +13,30 @@ export const CartProvider = ({ children }) => {
     setCart((prevCart) => {
       prevCart.price = (prevCart.price || 0) + (product.price || 0) * (quantity || 1);
       const prevItem = prevCart.items.find(item => item.product._id == product._id)
-      if (prevItem) prevItem.quantity += quantity || 1;
+      if (prevItem) {
+        prevItem.quantity += quantity || 1;
+        console.log("|||||||||||||||||||||||||||")
+      } 
       else prevCart.items = [...prevCart.items, {product, quantity}]
       return {...prevCart}
     });
   };
 
   const removeFromCart = (productId) => {
+    console.log(cart.items, productId)
     setCart((prevCart) => {
       const prevItem = prevCart.items.find(p => p.product._id == productId)
-      prevCart.price -= prevItem.price;
-      if (prevItem.quantity === 1) prevCart.items.filter(item => item.product._id !== productId);
-      else --prevItem.quantity;
-      return {...prevCart};
+      let updatedItems;
+      if (prevItem.quantity === 1) {
+        updatedItems = prevCart.items.filter(item => item.product._id !== productId);
+      } else {
+        updatedItems = prevCart.items.map(item => item.product._id === productId ? { ...item, quantity: item.quantity - 1 } : item);
+      }
+      return {
+        ...prevCart,
+        items: updatedItems,
+        price: prevCart.price - (prevItem.product.price || 0),
+      };
     });
   };
   
