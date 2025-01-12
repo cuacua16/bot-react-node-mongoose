@@ -112,7 +112,7 @@ export class ChatBotLogic {
       this.chats.find(chat => chat.matches && chat.matches.some(match => this.normalizeText(match) === this.normalizeText(input)))
     );
     
-    if (this.currentNode.actionFinish) return this.currentNode.actionFinish(this);
+    if (this.currentNode && this.currentNode.actionFinish) return this.currentNode.actionFinish(this);
     
     if (!nextNode) {
       return this.errorMessage()

@@ -13,17 +13,13 @@ export const CartProvider = ({ children }) => {
     setCart((prevCart) => {
       prevCart.price = (prevCart.price || 0) + (product.price || 0) * (quantity || 1);
       const prevItem = prevCart.items.find(item => item.product._id == product._id)
-      if (prevItem) {
-        prevItem.quantity += quantity || 1;
-        console.log("|||||||||||||||||||||||||||")
-      } 
+      if (prevItem) prevItem.quantity += quantity || 1;
       else prevCart.items = [...prevCart.items, {product, quantity}]
       return {...prevCart}
     });
   };
 
   const removeFromCart = (productId) => {
-    console.log(cart.items, productId)
     setCart((prevCart) => {
       const prevItem = prevCart.items.find(p => p.product._id == productId)
       let updatedItems;
