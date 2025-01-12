@@ -7,4 +7,5 @@ export default {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/app/$1',
   },
+  setupFiles: ['<rootDir>/tests/setupTests.js'],
 };
